@@ -2,6 +2,7 @@ import java.io.File;
 import java.util.Scanner;
 
 
+
 class D1P1 {
 
     public static void main(String[] args) {
