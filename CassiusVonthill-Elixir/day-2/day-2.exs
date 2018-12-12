@@ -59,11 +59,6 @@ defmodule Day2 do
     |> (fn x -> x == 1 end).()
   end
 
-  def find_match(inputs, input) do
-    inputs
-    |> Enum.find(false, &one_mismatch?(&1, input))
-  end
-
   def recur([]), do: {}
 
   def recur([head | tail]), do: recur(tail, head)
