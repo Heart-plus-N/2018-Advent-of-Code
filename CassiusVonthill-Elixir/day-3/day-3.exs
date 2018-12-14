@@ -8,7 +8,30 @@ defmodule Day3 do
     inputs
     |> compile_data()
     |> Map.values()
+    |> IO.inspect()
     |> Enum.count(&(Kernel.length(&1) != 1))
+  end
+
+  def part2(inputs) do
+    all_ids =
+      inputs
+      |> Stream.map(&String.split(&1, " ", trim: true))
+      |> Stream.map(fn [ h | _t ] -> h end) # IDs are the first item in the list
+      |> MapSet.new()
+
+    overlaps = 
+      inputs
+      |> compile_data()
+      |> Map.values()
+      |> Enum.filter(&(Kernel.length(&1) > 1))
+      |> List.flatten()
+      |> MapSet.new()
+
+    MapSet.difference(all_ids, overlaps)
+    |> MapSet.to_list()
+    |> List.first()
+    |> String.slice(1..10)
+    |> String.to_integer()
   end
 
   def parse_input(string_input) do
