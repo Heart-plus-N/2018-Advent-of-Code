@@ -8,7 +8,7 @@ defmodule Day3 do
     inputs
     |> compile_data()
     |> Map.values()
-    |> IO.inspect()
+    # |> IO.inspect()
     |> Enum.count(&(Kernel.length(&1) != 1))
   end
 
