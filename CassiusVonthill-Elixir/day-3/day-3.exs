@@ -7,25 +7,33 @@ defmodule Day3 do
   def part1(inputs) do
     inputs
     |> Stream.map(&parse_input(&1))
-    |> Stream.flat_map(&generate_keys(&1))
+    |> Stream.map(&generate_keys(&1))
+    |> Enum.to_list()
+    |> List.flatten()
+    |> Enum.reduce(%{}, fn tup, acc -> 
+      Map.update(acc, tup, 1, &(&1 + 1))
+    end)
+    |> Map.values()
+    |> Enum.count(&(&1 != 1))
   end
 
   def parse_input(string_input) do
-    split_to_tuple = fn string_input, delimiter -> 
-      string_input |> String.split(delimiter, trim: true) |> List.to_tuple()
+    extract_digits = fn string_input -> 
+      string_input
+      |> (&Regex.scan(~r/\d+/, &1)).()
+      |> List.flatten()
+      |> Enum.map(&String.to_integer(&1))
+      |> List.to_tuple()
     end
 
-    {_id, _at, offsets, area} = split_to_tuple.(string_input, " ")
+    {_id, _at, offsets, area} =
+      string_input
+      |> String.split(" ", trim: true)
+      |> List.to_tuple()
       
-    offset_tuple =
-      offsets
-      |> split_to_tuple.("")
-      |> (fn {a, _b, c, _d} -> {String.to_integer(a), String.to_integer(c)} end).()
+    offset_tuple = offsets |> extract_digits.()
 
-    area_tuple =
-      area
-      |> split_to_tuple.("")
-      |> (fn {a, _b, c} -> {String.to_integer(a), String.to_integer(c)} end).()
+    area_tuple = area |> extract_digits.()
 
     {offset_tuple, area_tuple}
   end
