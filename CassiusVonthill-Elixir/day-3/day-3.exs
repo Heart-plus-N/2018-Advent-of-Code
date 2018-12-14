@@ -6,15 +6,9 @@ defmodule Day3 do
 
   def part1(inputs) do
     inputs
-    |> Stream.map(&parse_input(&1))
-    |> Stream.map(&generate_keys(&1))
-    |> Enum.to_list()
-    |> List.flatten()
-    |> Enum.reduce(%{}, fn tup, acc -> 
-      Map.update(acc, tup, 1, &(&1 + 1))
-    end)
+    |> compile_data()
     |> Map.values()
-    |> Enum.count(&(&1 != 1))
+    |> Enum.count(&(Kernel.length(&1) != 1))
   end
 
   def parse_input(string_input) do
@@ -26,7 +20,7 @@ defmodule Day3 do
       |> List.to_tuple()
     end
 
-    {_id, _at, offsets, area} =
+    {id, _at, offsets, area} =
       string_input
       |> String.split(" ", trim: true)
       |> List.to_tuple()
@@ -35,14 +29,25 @@ defmodule Day3 do
 
     area_tuple = area |> extract_digits.()
 
-    {offset_tuple, area_tuple}
+    {id, offset_tuple, area_tuple}
   end
 
-  def generate_keys({{x_offset, y_offset}, {width, height}}) do
+  def generate_keys({id, {x_offset, y_offset}, {width, height}}) do
     Enum.map(Range.new(1, height), fn h -> 
       for w <- Range.new(1, width) do
-        {x_offset + w, y_offset + h}
+        {id, {x_offset + w, y_offset + h}}
       end
+    end)
+  end
+
+  def compile_data(inputs) do
+    inputs
+    |> Stream.map(&parse_input(&1))
+    |> Stream.map(&generate_keys(&1))
+    |> Enum.to_list()
+    |> List.flatten()
+    |> Enum.reduce(%{}, fn {id, tup}, acc -> 
+      Map.update(acc, tup, [id], &([ id | &1]))
     end)
   end
   
